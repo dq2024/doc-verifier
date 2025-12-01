@@ -109,18 +109,18 @@ def merge_and_label_documents(
     tokenizer = SimpleTokenizer()
     
     # Load ground truth
-    print(f"\nLoading ground truth: {ground_truth_file}")
+    print(f"\nLoading ground truth: {ground_truth_file}", flush=True)
     ground_truth = read_jsonl(ground_truth_file)
-    print(f"  Loaded {len(ground_truth)} ground truth entries")
+    print(f"  Loaded {len(ground_truth)} ground truth entries", flush=True)
     
     # Load all retriever data
     retriever_data = {}
     for name, path in retriever_files.items():
-        print(f"Loading {name}: {path}")
+        print(f"Loading {name}: {path}", flush=True)
         retriever_data[name] = read_jsonl(path)
-        print(f"  Loaded {len(retriever_data[name])} queries")
+        print(f"  Loaded {len(retriever_data[name])} queries", flush=True)
     
-    print(f"\nProcessing {len(sampled_indices)} sampled queries...")
+    print(f"\nProcessing {len(sampled_indices)} sampled queries...", flush=True)
     
     # Statistics
     stats = {
@@ -198,7 +198,7 @@ def merge_and_label_documents(
     
     stats['avg_positives_per_query'] = sum(positives_per_query) / len(positives_per_query)
     
-    print(f"\nSaving merged data to: {output_file}")
+    print(f"\nSaving merged data to: {output_file}", flush=True)
     write_jsonl(merged_data, output_file)
     
     return merged_data, stats
@@ -208,37 +208,37 @@ def print_statistics(stats: Dict[str, Any]):
     """Print statistics in format for mentor."""
     
     print("\n" + "=" * 70)
-    print("DATA STATISTICS")
+    print("DATA STATISTICS", flush=True)
     print("=" * 70)
     
-    print(f"\n# Questions: {stats['n_queries_sampled']:,}")
-    print(f"  - {stats['n_retrievers']} retrievers, {stats['n_docs_per_retriever']} documents each")
+    print(f"\n# Questions: {stats['n_queries_sampled']:,}", flush=True)
+    print(f"  - {stats['n_retrievers']} retrievers, {stats['n_docs_per_retriever']} documents each", flush=True)
     
-    print(f"\n# Total Docs (before dedup): {stats['total_docs_before_dedup']:,}")
-    print(f"# Total Docs (after dedup): {stats['total_docs_after_dedup']:,}")
+    print(f"\n# Total Docs (before dedup): {stats['total_docs_before_dedup']:,}", flush=True)
+    print(f"# Total Docs (after dedup): {stats['total_docs_after_dedup']:,}", flush=True)
     
     dedup_removed = stats['total_docs_before_dedup'] - stats['total_docs_after_dedup']
     dedup_rate = dedup_removed / stats['total_docs_before_dedup'] * 100
-    print(f"# Duplicates removed: {dedup_removed:,} ({dedup_rate:.1f}%)")
+    print(f"# Duplicates removed: {dedup_removed:,} ({dedup_rate:.1f}%)", flush=True)
     
     total = stats['total_positive'] + stats['total_negative']
     pct_positive = stats['total_positive'] / total * 100
     
-    print(f"\n# Exs: {total:,}")
-    print(f"# Positive: {stats['total_positive']:,}")
-    print(f"# Negative: {stats['total_negative']:,}")
-    print(f"% Positive Label: {pct_positive:.2f}%")
+    print(f"\n# Exs: {total:,}", flush=True)
+    print(f"# Positive: {stats['total_positive']:,}", flush=True)
+    print(f"# Negative: {stats['total_negative']:,}", flush=True)
+    print(f"% Positive Label: {pct_positive:.2f}%", flush=True)
     
-    print(f"\nQueries with ≥1 positive: {stats['queries_with_positives']}/{stats['n_queries_sampled']}")
-    print(f"Avg positives per query: {stats['avg_positives_per_query']:.2f}")
+    print(f"\nQueries with ≥1 positive: {stats['queries_with_positives']}/{stats['n_queries_sampled']}", flush=True)
+    print(f"Avg positives per query: {stats['avg_positives_per_query']:.2f}", flush=True)
     
-    print(f"\nPer Retriever:")
+    print(f"\nPer Retriever:", flush=True)
     for retriever in stats['docs_per_retriever'].keys():
         pos = stats['positive_per_retriever'][retriever]
         neg = stats['negative_per_retriever'][retriever]
         total_r = pos + neg
         pct = pos / total_r * 100 if total_r > 0 else 0
-        print(f"  {retriever}: {pos:,} pos / {total_r:,} total ({pct:.1f}%)")
+        print(f"  {retriever}: {pos:,} pos / {total_r:,} total ({pct:.1f}%)", flush=True)
 
 
 def main():
@@ -261,15 +261,15 @@ def main():
     N_DOCS_PER_RETRIEVER = 100
     
     print("=" * 70)
-    print("Sampling queries")
+    print("Sampling queries", flush=True)
     print("=" * 70)
     
     gt_data = read_jsonl(ground_truth_file)
     total_queries = len(gt_data)
-    print(f"Total queries: {total_queries}")
+    print(f"Total queries: {total_queries}", flush=True)
     
     sampled_indices = sorted(random.sample(range(total_queries), N_QUERIES_SAMPLE))
-    print(f"Sampled {len(sampled_indices)} queries")
+    print(f"Sampled {len(sampled_indices)} queries", flush=True)
     
     # Save indices
     indices_file = output_dir / 'sampled_query_indices.json'
@@ -277,7 +277,7 @@ def main():
         json.dump(sampled_indices, f)
     
     print("\n" + "=" * 70)
-    print("Merging and labeling documents")
+    print("Merging and labeling documents", flush=True)
     print("=" * 70)
     
     merged_data, stats = merge_and_label_documents(
@@ -297,10 +297,10 @@ def main():
     with open(stats_file, 'w') as f:
         json.dump(stats_serializable, f, indent=2)
     
-    print(f"\nOutput files:")
-    print(f"  {merged_file}")
-    print(f"  {stats_file}")
-    print(f"  {indices_file}")
+    print(f"\nOutput files:", flush=True)
+    print(f"  {merged_file}", flush=True)
+    print(f"  {stats_file}", flush=True)
+    print(f"  {indices_file}", flush=True)
 
 
 if __name__ == "__main__":
