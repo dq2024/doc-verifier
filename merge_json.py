@@ -251,7 +251,7 @@ def main():
     
     ground_truth_file = '/scratch/dq2024/diverse_retriever/train_data.jsonl'
     
-    output_dir = Path('/scratch/dq2024/diverse_retriever/verifier_training_data')
+    output_dir = Path('/scratch/dq2024/doc-verifier/verifier_training_data')
     output_dir.mkdir(parents=True, exist_ok=True)
     
     merged_file = output_dir / 'merged_3_retrievers_1k_queries.jsonl'
