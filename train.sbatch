@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=train_verifier
-#SBATCH --output=/scratch/dq2024/doc-verifier/logs/train_%j.out
-#SBATCH --error=/scratch/dq2024/doc-verifier/logs/train_%j.err
+#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/train.out
 #SBATCH --time=12:00:00
 #SBATCH --gres=gpu:h200:1
 #SBATCH --nodes=1
