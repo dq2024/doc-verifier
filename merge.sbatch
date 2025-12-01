@@ -6,7 +6,7 @@
 #SBATCH --time=2:00:00
 #SBATCH --mem=32GB
 #SBATCH --job-name=eval
-#SBATCH --output=/scratch/dq2024/diverse_retriever/eval/out_files/eval.out
+#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/eval.out
 #SBATCH --account=torch_pr_152_courant
 
 
