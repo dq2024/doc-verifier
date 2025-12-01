@@ -9,7 +9,6 @@
 #SBATCH --mem=256GB
 #SBATCH --account=torch_pr_152_courant
 
-mkdir -p /scratch/dq2024/doc-verifier/logs
 
 if [[ -e /dev/nvidia0 ]]; then nv="--nv"; fi
 
