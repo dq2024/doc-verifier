@@ -83,8 +83,7 @@ def main():
     balanced = balance_dataset(
         input_file=input_file,
         output_file=output_file,
-        target_positive_rate=0.30,
-        seed=42
+        target_positive_rate=0.30
     )
 
 if __name__ == "__main__":
