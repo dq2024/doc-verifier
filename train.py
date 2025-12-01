@@ -131,6 +131,9 @@ def main():
     VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama.jsonl"
     OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-3b-verifier"
     
+    # GET TOKEN FROM ENVIRONMENT VARIABLE
+    HF_TOKEN = os.environ.get('HF_TOKEN', None)
+    
     # Hyperparameters
     BATCH_SIZE = 4  # Per GPU
     GRAD_ACCUM_STEPS = 4
@@ -139,20 +142,21 @@ def main():
     MAX_LENGTH = 2048
     
     if local_rank == 0:
-        print(f"Using {torch.cuda.device_count()} GPUs", flush=True)
-        print(f"Effective batch size: {BATCH_SIZE * GRAD_ACCUM_STEPS * torch.cuda.device_count()}", flush=True)
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        print(f"Effective batch size: {BATCH_SIZE * GRAD_ACCUM_STEPS * torch.cuda.device_count()}")
     
-    # Load model
+    # Load model WITH TOKEN
     if local_rank == 0:
-        print("Loading tokenizer and model...", flush=True)
+        print("Loading tokenizer and model...")
     
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, token=HF_TOKEN)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
         torch_dtype=torch.bfloat16,
+        token=HF_TOKEN  # ADD TOKEN HERE
     ).to(device)
     
     # Wrap with DDP
@@ -160,7 +164,7 @@ def main():
     
     # Load data
     if local_rank == 0:
-        print("Loading datasets...", flush=True)
+        print("Loading datasets...")
     
     train_dataset = VerifierDataset(TRAIN_FILE, tokenizer, MAX_LENGTH)
     val_dataset = VerifierDataset(VAL_FILE, tokenizer, MAX_LENGTH)
@@ -185,7 +189,7 @@ def main():
     )
     
     if local_rank == 0:
-        print(f"Train size: {len(train_dataset)}, Val size: {len(val_dataset)}", flush=True)
+        print(f"Train size: {len(train_dataset)}, Val size: {len(val_dataset)}")
     
     # Optimizer
     optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
@@ -200,23 +204,23 @@ def main():
         train_sampler.set_epoch(epoch)
         
         if local_rank == 0:
-            print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}", flush=True)
+            print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}")
         
         train_loss = train_epoch(model, train_loader, optimizer, device, GRAD_ACCUM_STEPS, local_rank)
         val_loss = eval_epoch(model, val_loader, device, local_rank)
         
         if local_rank == 0:
-            print(f"Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}", flush=True)
+            print(f"Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
             
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                print("Saving best model...", flush=True)
+                print("Saving best model...")
                 # Save from rank 0 only, unwrap DDP
                 model.module.save_pretrained(OUTPUT_DIR)
                 tokenizer.save_pretrained(OUTPUT_DIR)
     
     if local_rank == 0:
-        print(f"\nTraining complete! Model saved to {OUTPUT_DIR}", flush=True)
+        print(f"\nTraining complete! Model saved to {OUTPUT_DIR}")
     
     cleanup_distributed()
 

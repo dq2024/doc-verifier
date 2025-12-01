@@ -19,6 +19,9 @@ singularity exec ${nv} \
 source /ext3/env.sh
 conda activate dr-env-3-9
 
+export HF_TOKEN='${HF_TOKEN}'
+
+
 cd /scratch/dq2024/doc-verifier
 
 torchrun --nproc_per_node=1 --master_port=29501 train.py
