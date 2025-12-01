@@ -139,12 +139,12 @@ def main():
     MAX_LENGTH = 2048
     
     if local_rank == 0:
-        print(f"Using {torch.cuda.device_count()} GPUs")
-        print(f"Effective batch size: {BATCH_SIZE * GRAD_ACCUM_STEPS * torch.cuda.device_count()}")
+        print(f"Using {torch.cuda.device_count()} GPUs", flush=True)
+        print(f"Effective batch size: {BATCH_SIZE * GRAD_ACCUM_STEPS * torch.cuda.device_count()}", flush=True)
     
     # Load model
     if local_rank == 0:
-        print("Loading tokenizer and model...")
+        print("Loading tokenizer and model...", flush=True)
     
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     if tokenizer.pad_token is None:
@@ -160,7 +160,7 @@ def main():
     
     # Load data
     if local_rank == 0:
-        print("Loading datasets...")
+        print("Loading datasets...", flush=True)
     
     train_dataset = VerifierDataset(TRAIN_FILE, tokenizer, MAX_LENGTH)
     val_dataset = VerifierDataset(VAL_FILE, tokenizer, MAX_LENGTH)
@@ -185,7 +185,7 @@ def main():
     )
     
     if local_rank == 0:
-        print(f"Train size: {len(train_dataset)}, Val size: {len(val_dataset)}")
+        print(f"Train size: {len(train_dataset)}, Val size: {len(val_dataset)}", flush=True)
     
     # Optimizer
     optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
@@ -200,23 +200,23 @@ def main():
         train_sampler.set_epoch(epoch)
         
         if local_rank == 0:
-            print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}")
+            print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}", flush=True)
         
         train_loss = train_epoch(model, train_loader, optimizer, device, GRAD_ACCUM_STEPS, local_rank)
         val_loss = eval_epoch(model, val_loader, device, local_rank)
         
         if local_rank == 0:
-            print(f"Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+            print(f"Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}", flush=True)
             
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                print("Saving best model...")
+                print("Saving best model...", flush=True)
                 # Save from rank 0 only, unwrap DDP
                 model.module.save_pretrained(OUTPUT_DIR)
                 tokenizer.save_pretrained(OUTPUT_DIR)
     
     if local_rank == 0:
-        print(f"\nTraining complete! Model saved to {OUTPUT_DIR}")
+        print(f"\nTraining complete! Model saved to {OUTPUT_DIR}", flush=True)
     
     cleanup_distributed()
 
