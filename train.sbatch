@@ -24,5 +24,5 @@ export HF_TOKEN='${HF_TOKEN}'
 
 cd /scratch/dq2024/doc-verifier
 
-torchrun --nproc_per_node=2 --master_port=29501 train.py
+torchrun --nproc_per_node=2 --master_port=29501 prepare_training_data.py
 "
