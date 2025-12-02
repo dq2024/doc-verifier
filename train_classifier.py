@@ -74,11 +74,12 @@ class VerifierDataset(Dataset):
 class LlamaClassifier(nn.Module):
     """Llama with a classification head."""
     
-    def __init__(self, base_model, num_labels=2, dropout=0.1):
+    def __init__(self, base_model, num_labels=2, dropout=0.1, dtype=torch.bfloat16):
         super().__init__()
         self.base_model = base_model
         self.dropout = nn.Dropout(dropout)
-        self.classifier = nn.Linear(base_model.config.hidden_size, num_labels)
+        # Match dtype to base model to avoid mat1/mat2 dtype mismatch
+        self.classifier = nn.Linear(base_model.config.hidden_size, num_labels, dtype=dtype)
     
     def forward(self, input_ids, attention_mask, labels=None):
         outputs = self.base_model(
@@ -178,7 +179,7 @@ def eval_epoch(model, val_loader, device, local_rank):
             all_labels.extend(labels.cpu().numpy())
     
     # Gather across processes
-    loss_tensor = torch.tensor([total_loss, len(val_loader)], device=device)
+    loss_tensor = torch.tensor([total_loss, len(val_loader)], device=device, dtype=torch.float32)
     dist.all_reduce(loss_tensor, op=dist.ReduceOp.SUM)
     
     avg_loss = loss_tensor[0].item() / loss_tensor[1].item()
@@ -254,8 +255,8 @@ def main():
     if local_rank == 0:
         base_model.print_trainable_parameters()
     
-    # Create classifier model
-    model = LlamaClassifier(base_model, num_labels=2, dropout=CLASSIFIER_DROPOUT)
+    # Create classifier model (match dtype to base model)
+    model = LlamaClassifier(base_model, num_labels=2, dropout=CLASSIFIER_DROPOUT, dtype=torch.bfloat16)
     model = model.to(device)
     model = DDP(model, device_ids=[local_rank])
     
