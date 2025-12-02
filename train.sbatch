@@ -2,7 +2,7 @@
 #SBATCH --job-name=train_verifier
 #SBATCH --output=/scratch/dq2024/doc-verifier/out_files/train.out
 #SBATCH --time=12:00:00
-#SBATCH --gres=gpu:h200:1
+#SBATCH --gres=gpu:h200:2
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=4
@@ -24,5 +24,5 @@ export HF_TOKEN='${HF_TOKEN}'
 
 cd /scratch/dq2024/doc-verifier
 
-torchrun --nproc_per_node=1 --master_port=29501 train.py
+torchrun --nproc_per_node=2 --master_port=29501 train.py
 "

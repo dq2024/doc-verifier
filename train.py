@@ -126,7 +126,7 @@ def main():
     device = torch.device(f'cuda:{local_rank}')
     
     # Paths
-    MODEL_NAME = "meta-llama/Llama-3.2-3B"
+    MODEL_NAME = "meta-llama/Llama-3.2-1B"
     TRAIN_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/train_llama.jsonl"
     VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama.jsonl"
     OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-3b-verifier"

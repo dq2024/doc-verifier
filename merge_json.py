@@ -313,11 +313,9 @@ def main():
     merged_file = output_dir / 'merged_3_retrievers_1k_queries.jsonl'
     
     # Parameters
-    N_QUERIES_SAMPLE = 1000
+    N_QUERIES_SAMPLE = 10000
     N_DOCS_PER_RETRIEVER = 100
-    RANDOM_SEED = 42
-    
-    random.seed(RANDOM_SEED)
+
     
     # ========================================================================
     # Sample queries
