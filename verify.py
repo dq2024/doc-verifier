@@ -143,32 +143,15 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
                  max_length=1024, batch_size=16, confidence_threshold=0.5,
                  keep_unverified=False):
     """
-    Process input JSON file and filter documents.
-    
-    Args:
-        input_file: Path to input JSON file
-        output_file: Path to output JSON file
-        model: Trained classifier model
-        tokenizer: Tokenizer
-        device: Device to run inference on
-        max_length: Max sequence length
-        batch_size: Batch size for inference
-        confidence_threshold: Minimum confidence to keep a document
-        keep_unverified: If True, keep docs where model says NO but add 'verified' field
+    Process input JSONL file and filter documents.
     """
     print(f"\nReading {input_file}...", flush=True)
-    try:
-        with open(input_file, 'r', encoding='utf-8') as f:
-            data = [json.loads(line.strip()) for line in f if line.strip()]
-        return data
-    except FileNotFoundError:
-        print(f"Error: File {input_file} not found.")
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in {input_file}: {e}")
-    
-    # Handle both list of objects and single object
-    if isinstance(data, dict):
-        data = [data]
+    data = []
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                data.append(json.loads(line))
     
     print(f"Processing {len(data)} questions...", flush=True)
     
@@ -196,32 +179,30 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
             total_docs += 1
             
             if pred == 1 and conf >= confidence_threshold:
-                # Document verified as relevant
                 ctx['verified'] = True
                 ctx['verification_confidence'] = round(conf, 4)
                 verified_ctxs.append(ctx)
                 kept_docs += 1
             elif keep_unverified:
-                # Keep but mark as unverified
                 ctx['verified'] = False
                 ctx['verification_confidence'] = round(conf, 4)
                 verified_ctxs.append(ctx)
         
-        # Update ctxs with only verified documents
         item['ctxs'] = verified_ctxs
     
-    print(f"\nResults:", flush=True)
-    print(f"  Total documents processed: {total_docs}", flush=True)
-    print(f"  Documents kept (verified): {kept_docs}", flush=True)
-    print(f"  Documents removed: {total_docs - kept_docs}", flush=True)
-    print(f"  Keep rate: {100 * kept_docs / total_docs:.1f}%", flush=True)
+    print(f"\nResults:")
+    print(f"  Total documents processed: {total_docs}")
+    print(f"  Documents kept (verified): {kept_docs}")
+    print(f"  Documents removed: {total_docs - kept_docs}")
+    print(f"  Keep rate: {100 * kept_docs / total_docs:.1f}%")
     
-    # Write output
-    print(f"\nWriting to {output_file}...", flush=True)
+    # Write output as JSONL (same format as input)
+    print(f"\nWriting to {output_file}...")
     with open(output_file, 'w') as f:
-        json.dump(data, f, indent=2)
+        for item in data:
+            f.write(json.dumps(item) + '\n')
     
-    print("Done!", flush=True)
+    print("Done!")
     return data
 
 
