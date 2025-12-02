@@ -129,7 +129,7 @@ def main():
     MODEL_NAME = "meta-llama/Llama-3.2-1B"
     TRAIN_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/train_llama.jsonl"
     VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama.jsonl"
-    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-3b-verifier"
+    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier"
     
     # GET TOKEN FROM ENVIRONMENT VARIABLE
     HF_TOKEN = os.environ.get('HF_TOKEN', None)
