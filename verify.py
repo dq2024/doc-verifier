@@ -157,8 +157,14 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
         keep_unverified: If True, keep docs where model says NO but add 'verified' field
     """
     print(f"\nReading {input_file}...", flush=True)
-    with open(input_file, 'r') as f:
-        data = json.load(f)
+    try:
+        with open(input_file, 'r', encoding='utf-8') as f:
+            data = [json.loads(line.strip()) for line in f if line.strip()]
+        return data
+    except FileNotFoundError:
+        print(f"Error: File {input_file} not found.")
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in {input_file}: {e}")
     
     # Handle both list of objects and single object
     if isinstance(data, dict):
