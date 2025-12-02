@@ -192,7 +192,7 @@ def main():
         print(f"Train size: {len(train_dataset)}, Val size: {len(val_dataset)}")
     
     # Optimizer
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=0.1)
     
     # Train
     best_val_loss = float('inf')
