@@ -178,7 +178,7 @@ def eval_epoch(model, val_loader, device, local_rank):
             all_labels.extend(labels.cpu().numpy())
     
     # Gather across processes
-    loss_tensor = torch.tensor([total_loss, len(val_loader)], device=device, dtype=torch.float32)
+    loss_tensor = torch.tensor([total_loss, len(val_loader)], device=device)
     dist.all_reduce(loss_tensor, op=dist.ReduceOp.SUM)
     
     avg_loss = loss_tensor[0].item() / loss_tensor[1].item()
