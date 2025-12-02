@@ -43,24 +43,24 @@ class LlamaClassifier(nn.Module):
 
 def load_model(model_dir, base_model_name="meta-llama/Llama-3.2-1B", device="cuda", hf_token=None):
     """Load the trained classifier model."""
-    print(f"Loading tokenizer from {model_dir}...")
+    print(f"Loading tokenizer from {model_dir}...", flush=True)
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     
-    print(f"Loading base model: {base_model_name}...")
+    print(f"Loading base model: {base_model_name}...", flush=True)
     base_model = AutoModel.from_pretrained(
         base_model_name,
         torch_dtype=torch.bfloat16,
         token=hf_token
     )
     
-    print(f"Loading LoRA weights from {model_dir}...")
+    print(f"Loading LoRA weights from {model_dir}...", flush=True)
     base_model = PeftModel.from_pretrained(base_model, model_dir)
     
     # Create classifier and load head weights
     model = LlamaClassifier(base_model, num_labels=2, dtype=torch.bfloat16)
     
     classifier_path = Path(model_dir) / "classifier_head.pt"
-    print(f"Loading classifier head from {classifier_path}...")
+    print(f"Loading classifier head from {classifier_path}...", flush=True)
     model.classifier.load_state_dict(torch.load(classifier_path, map_location=device))
     
     model = model.to(device)
@@ -156,7 +156,7 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
         confidence_threshold: Minimum confidence to keep a document
         keep_unverified: If True, keep docs where model says NO but add 'verified' field
     """
-    print(f"\nReading {input_file}...")
+    print(f"\nReading {input_file}...", flush=True)
     with open(input_file, 'r') as f:
         data = json.load(f)
     
@@ -164,7 +164,7 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
     if isinstance(data, dict):
         data = [data]
     
-    print(f"Processing {len(data)} questions...")
+    print(f"Processing {len(data)} questions...", flush=True)
     
     total_docs = 0
     kept_docs = 0
@@ -204,18 +204,18 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
         # Update ctxs with only verified documents
         item['ctxs'] = verified_ctxs
     
-    print(f"\nResults:")
-    print(f"  Total documents processed: {total_docs}")
-    print(f"  Documents kept (verified): {kept_docs}")
-    print(f"  Documents removed: {total_docs - kept_docs}")
-    print(f"  Keep rate: {100 * kept_docs / total_docs:.1f}%")
+    print(f"\nResults:", flush=True)
+    print(f"  Total documents processed: {total_docs}", flush=True)
+    print(f"  Documents kept (verified): {kept_docs}", flush=True)
+    print(f"  Documents removed: {total_docs - kept_docs}", flush=True)
+    print(f"  Keep rate: {100 * kept_docs / total_docs:.1f}%", flush=True)
     
     # Write output
-    print(f"\nWriting to {output_file}...")
+    print(f"\nWriting to {output_file}...", flush=True)
     with open(output_file, 'w') as f:
         json.dump(data, f, indent=2)
     
-    print("Done!")
+    print("Done!", flush=True)
     return data
 
 
@@ -245,7 +245,7 @@ def main():
     
     # Set device
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using device: {device}")
+    print(f"Using device: {device}", flush=True)
     
     # Load model
     model, tokenizer = load_model(
