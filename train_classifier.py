@@ -198,9 +198,9 @@ def main():
     
     # Paths
     MODEL_NAME = "meta-llama/Llama-3.2-1B"
-    TRAIN_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/train_llama.jsonl"
-    VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama.jsonl"
-    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier"
+    TRAIN_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/train_llama_query_split.jsonl"
+    VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama_query_split.jsonl"
+    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split"
     
     HF_TOKEN = os.environ.get('HF_TOKEN', None)
     
