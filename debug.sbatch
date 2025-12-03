@@ -2,7 +2,6 @@
 #SBATCH --job-name=filter_docs
 #SBATCH --output=/scratch/dq2024/doc-verifier/out_files/verify.out
 #SBATCH --time=4:00:00
-#SBATCH --gres=gpu:h200:1
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=4
