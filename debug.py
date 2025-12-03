@@ -53,8 +53,8 @@ def main():
     import os
     
     # CONFIGURE THESE PATHS
-    MODEL_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier"
-    VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama.jsonl"
+    MODEL_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split"
+    VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama_query_split.jsonl"
     TEST_FILE = "/scratch/dq2024/diverse_retriever/eval/contriever/base/qampari_corpus_finetuned_base_t100.json"  # Your test file
     ANSWERS_FILE = "/scratch/dq2024/diverse_retriever/data/dev_data_gt_qampari_corpus.jsonl"  # File with answer strings
     
