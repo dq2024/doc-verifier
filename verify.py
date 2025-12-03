@@ -167,7 +167,7 @@ def process_file(input_file, output_file, model, tokenizer, device="cuda",
         
         # Prepare batch
         questions = [question] * len(ctxs)
-        documents = [f"{ctx.get('title', '')} {ctx.get('text', '')}" for ctx in ctxs]
+        documents = [ctx.get('text', '') for ctx in ctxs]
         
         # Verify all documents for this question
         results = verify_batch(model, tokenizer, questions, documents, 
