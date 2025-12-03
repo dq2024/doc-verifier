@@ -47,7 +47,7 @@ def has_answer(answers, text, tokenizer):
 # ============================================================================
 # Load model (copy from filter_documents.py)
 # ============================================================================
-from filter_documents import load_model, verify_batch
+from verify import load_model, verify_batch
 
 def main():
     import os
