@@ -107,7 +107,7 @@ def split_by_query(data: List[Dict], train_ratio: float = 0.9, seed: int = 42) -
 
 def main():
     # Configuration
-    input_file = '/scratch/dq2024/doc-verifier/verifier_training_data/verifier_train_20pct_positive.jsonl'
+    input_file = '/scratch/dq2024/doc-verifier/verifier_training_data/verifier_train_20pct_positive_1k.jsonl'
     output_dir = Path('/scratch/dq2024/doc-verifier/verifier_training_data')
     
     train_file = output_dir / 'train_llama_query_split.jsonl'
