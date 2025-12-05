@@ -20,5 +20,5 @@ singularity exec ${nv} \
 source /ext3/env.sh; 
 conda activate dr-env-3-9;
 
-python prepare_training_data.py
+python merge_json.py
 "
