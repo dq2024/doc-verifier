@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=train_verifier
-#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/classifier2.out
+#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/classifier3.out
 #SBATCH --time=12:00:00
 #SBATCH --gres=gpu:h200:2
 #SBATCH --nodes=1
