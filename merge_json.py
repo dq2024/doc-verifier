@@ -365,6 +365,17 @@ def main():
     print(f"  {stats_file}")
     print(f"  {indices_file}")
 
+    gt_data = read_jsonl(ground_truth_file)
+    print(f"Ground truth queries: {len(gt_data)}")
+
+    # How many after sampling?
+    print(f"Sampled indices: {len(sampled_indices)}")
+
+    # How many unique queries in merged output?
+    merged = read_jsonl(merged_file)
+    unique_queries = set(item['query_id'] for item in merged)
+    print(f"Unique queries in merged: {len(unique_queries)}")
+
 
 if __name__ == "__main__":
     main()

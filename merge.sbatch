@@ -5,8 +5,8 @@
 #SBATCH --tasks-per-node=1
 #SBATCH --time=10:00:00
 #SBATCH --mem=32GB
-#SBATCH --job-name=eval
-#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/eval.out
+#SBATCH --job-name=merge
+#SBATCH --output=/scratch/dq2024/doc-verifier/out_files/merge.out
 #SBATCH --account=torch_pr_152_courant
 
 
