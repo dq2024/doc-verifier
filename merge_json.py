@@ -181,6 +181,15 @@ def merge_and_label_documents(
         
         # First pass: collect all docs from all retrievers and label them
         for retriever_name, retriever_items in retriever_data.items():
+            print(f"Ground truth length: {len(ground_truth)}")
+            print(f"Contriever length: {len(retriever_data['contriever'])}")
+            print(f"Qwen3 length: {len(retriever_data['qwen3'])}")
+            print(f"Infly length: {len(retriever_data['infly'])}")
+
+            # Also check if indices match - same question at same index?
+            idx = 100
+            print(f"\nGT question: {ground_truth[idx].get('question', ground_truth[idx].get('question_text', ''))[:80]}")
+            print(f"Contriever question: {retriever_data['contriever'][idx].get('question', '')[:80]}")
             if idx >= len(retriever_items):
                 continue
             
@@ -375,6 +384,8 @@ def main():
     merged = read_jsonl(merged_file)
     unique_queries = set(item['query_id'] for item in merged)
     print(f"Unique queries in merged: {len(unique_queries)}")
+
+    
 
 
 if __name__ == "__main__":
