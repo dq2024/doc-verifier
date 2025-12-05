@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
 Merge retrieved documents from multiple retrievers and calculate statistics for verifier training.
+FIXED: Sample only from indices that exist in all retriever files.
 """
 
 import json
@@ -181,15 +182,6 @@ def merge_and_label_documents(
         
         # First pass: collect all docs from all retrievers and label them
         for retriever_name, retriever_items in retriever_data.items():
-            print(f"Ground truth length: {len(ground_truth)}")
-            print(f"Contriever length: {len(retriever_data['contriever'])}")
-            print(f"Qwen3 length: {len(retriever_data['qwen3'])}")
-            print(f"Infly length: {len(retriever_data['infly'])}")
-
-            # Also check if indices match - same question at same index?
-            idx = 100
-            print(f"\nGT question: {ground_truth[idx].get('question', ground_truth[idx].get('question_text', ''))[:80]}")
-            print(f"Contriever question: {retriever_data['contriever'][idx].get('question', '')[:80]}")
             if idx >= len(retriever_items):
                 continue
             
@@ -316,29 +308,54 @@ def main():
     
     ground_truth_file = '/scratch/dq2024/diverse_retriever/train_data.jsonl'
     
-    output_dir = Path('/scratch/dq2024/diverse_retriever/verifier_training_data')
+    output_dir = Path('/scratch/dq2024/doc-verifier/verifier_training_data')
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    merged_file = output_dir / 'merged_3_retrievers_1k_queries.jsonl'
+    merged_file = output_dir / 'merged_3_retrievers_10k_queries.jsonl'
     
     # Parameters
-    N_QUERIES_SAMPLE = 5000
     N_DOCS_PER_RETRIEVER = 100
 
-    
     # ========================================================================
-    # Sample queries
+    # Load data and find valid index range
     # ========================================================================
     print("=" * 70)
-    print("Sampling queries")
+    print("Loading data to determine valid index range")
     print("=" * 70)
     
     gt_data = read_jsonl(ground_truth_file)
-    total_queries = len(gt_data)
-    print(f"Total queries: {total_queries}")
+    print(f"Ground truth queries: {len(gt_data)}")
     
-    sampled_indices = sorted(random.sample(range(total_queries), N_QUERIES_SAMPLE))
-    print(f"Sampled {len(sampled_indices)} queries")
+    # Load retriever files to check their lengths
+    retriever_lengths = {}
+    for name, path in retriever_files.items():
+        data = read_jsonl(path)
+        retriever_lengths[name] = len(data)
+        print(f"{name}: {len(data)} queries")
+    
+    # Find max valid index (minimum across all files)
+    max_valid_idx = min(len(gt_data), *retriever_lengths.values())
+    print(f"\nMax valid index: {max_valid_idx}")
+    
+    # ========================================================================
+    # Sample queries from valid range only
+    # ========================================================================
+    print("\n" + "=" * 70)
+    print("Sampling queries")
+    print("=" * 70)
+    
+    # Use all available queries (or sample if you want fewer)
+    N_QUERIES_SAMPLE = max_valid_idx  # Use all 10,000
+    # N_QUERIES_SAMPLE = min(5000, max_valid_idx)  # Or sample 5000
+    
+    if N_QUERIES_SAMPLE >= max_valid_idx:
+        # Use all valid indices
+        sampled_indices = list(range(max_valid_idx))
+        print(f"Using all {len(sampled_indices)} valid queries")
+    else:
+        # Sample from valid range
+        sampled_indices = sorted(random.sample(range(max_valid_idx), N_QUERIES_SAMPLE))
+        print(f"Sampled {len(sampled_indices)} queries from valid range [0, {max_valid_idx})")
     
     # Save indices
     indices_file = output_dir / 'sampled_query_indices.json'
@@ -369,23 +386,31 @@ def main():
     with open(stats_file, 'w') as f:
         json.dump(stats_serializable, f, indent=2)
     
+    # ========================================================================
+    # Verification
+    # ========================================================================
+    print("\n" + "=" * 70)
+    print("VERIFICATION")
+    print("=" * 70)
+    
+    print(f"Ground truth queries: {len(gt_data)}")
+    print(f"Sampled indices: {len(sampled_indices)}")
+    
+    # Reload and check
+    merged = read_jsonl(str(merged_file))
+    unique_queries = set(item['query_id'] for item in merged)
+    print(f"Unique queries in merged: {len(unique_queries)}")
+    
+    # Should match!
+    if len(unique_queries) == len(sampled_indices):
+        print("✓ All sampled queries present in output!")
+    else:
+        print(f"✗ Missing {len(sampled_indices) - len(unique_queries)} queries")
+    
     print(f"\nOutput files:")
     print(f"  {merged_file}")
     print(f"  {stats_file}")
     print(f"  {indices_file}")
-
-    gt_data = read_jsonl(ground_truth_file)
-    print(f"Ground truth queries: {len(gt_data)}")
-
-    # How many after sampling?
-    print(f"Sampled indices: {len(sampled_indices)}")
-
-    # How many unique queries in merged output?
-    merged = read_jsonl(merged_file)
-    unique_queries = set(item['query_id'] for item in merged)
-    print(f"Unique queries in merged: {len(unique_queries)}")
-
-    
 
 
 if __name__ == "__main__":
