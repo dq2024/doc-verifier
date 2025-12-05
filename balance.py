@@ -78,12 +78,12 @@ def balance_dataset(input_file, output_file, target_positive_rate=0.30, seed=42)
 
 def main():
     input_file = '/scratch/dq2024/doc-verifier/verifier_training_data/merged_3_retrievers_1k_queries.jsonl'
-    output_file = '/scratch/dq2024/doc-verifier/verifier_training_data/verifier_train_30pct_positive.jsonl'
+    output_file = '/scratch/dq2024/doc-verifier/verifier_training_data/verifier_train_20pct_positive.jsonl'
     
     balanced = balance_dataset(
         input_file=input_file,
         output_file=output_file,
-        target_positive_rate=0.30
+        target_positive_rate=0.20
     )
 
 if __name__ == "__main__":
