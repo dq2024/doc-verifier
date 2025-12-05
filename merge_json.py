@@ -346,7 +346,7 @@ def main():
     
     # Use all available queries (or sample if you want fewer)
     N_QUERIES_SAMPLE = max_valid_idx  # Use all 10,000
-    # N_QUERIES_SAMPLE = min(5000, max_valid_idx)  # Or sample 5000
+    N_QUERIES_SAMPLE = min(1000, max_valid_idx)  # Or sample 5000
     
     if N_QUERIES_SAMPLE >= max_valid_idx:
         # Use all valid indices
