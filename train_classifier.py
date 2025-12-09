@@ -200,7 +200,7 @@ def main():
     MODEL_NAME = "meta-llama/Llama-3.2-1B"
     TRAIN_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/train_llama_query_split.jsonl"
     VAL_FILE = "/scratch/dq2024/doc-verifier/verifier_training_data/val_llama_query_split.jsonl"
-    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split"
+    OUTPUT_DIR = "/scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split-dp0.5-ldp0.2"
     
     HF_TOKEN = os.environ.get('HF_TOKEN', None)
     
@@ -211,12 +211,12 @@ def main():
     NUM_EPOCHS = 10
     MAX_LENGTH = 1024  # Shorter since we don't need to generate
     PATIENCE = 3
-    CLASSIFIER_DROPOUT = 0.3
+    CLASSIFIER_DROPOUT = 0.5
     
     # LoRA config
     LORA_R = 8
     LORA_ALPHA = 16
-    LORA_DROPOUT = 0.1
+    LORA_DROPOUT = 0.2
     
     if local_rank == 0:
         print(f"\n{'='*60}")
