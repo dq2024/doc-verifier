@@ -26,7 +26,7 @@ cd /scratch/dq2024/doc-verifier
 python verify.py \
     --input /scratch/dq2024/diverse_retriever/eval/contriever/base/qampari_corpus_finetuned_base_t100.json \
     --output /scratch/dq2024/doc-verifier/verified_output.json \
-    --model-dir /scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split \
+    --model-dir /scratch/dq2024/doc-verifier/models/llama-3.2-1b-verifier-classifier-query_split_lr5e-6 \
     --base-model meta-llama/Llama-3.2-1B \
     --batch-size 16 \
     --max-length 1024 \
