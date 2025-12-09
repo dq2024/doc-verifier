@@ -207,7 +207,7 @@ def main():
     # Hyperparameters
     BATCH_SIZE = 8
     GRAD_ACCUM_STEPS = 2
-    #LEARNING_RATE = 2e-5
+    LEARNING_RATE = 2e-5
     NUM_EPOCHS = 10
     MAX_LENGTH = 1024  # Shorter since we don't need to generate
     PATIENCE = 3
