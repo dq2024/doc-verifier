@@ -301,17 +301,17 @@ def main():
     # ========================================================================
     
     retriever_files = {
-        'contriever': '/scratch/dq2024/diverse_retriever/data/contriever_training_file_retrieved.json',
-        'qwen3': '/scratch/dq2024/diverse_retriever/data/qwen3_training_file_retrieved.json',
-        'infly': '/scratch/dq2024/diverse_retriever/data/infly_training_file_retrieved.json',
+        'contriever': '/scratch/dq2024/diverse_retriever/data/contriever_training_file_retrieved_all_queries.json',
+        'qwen3': '/scratch/dq2024/diverse_retriever/data/qwen3_training_file_retrieved.json_all_queries',
+        'infly': '/scratch/dq2024/diverse_retriever/data/infly_training_file_retrieved.json_all_queries',
     }
     
     ground_truth_file = '/scratch/dq2024/diverse_retriever/train_data.jsonl'
     
-    output_dir = Path('/scratch/dq2024/doc-verifier/verifier_training_data')
+    output_dir = Path('/scratch/dq2024/diverse_retriever/data')
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    merged_file = output_dir / 'merged_3_retrievers_1k_queries.jsonl'
+    merged_file = output_dir / 'merged_24k.jsonl'
     
     # Parameters
     N_DOCS_PER_RETRIEVER = 100
@@ -335,7 +335,7 @@ def main():
     
     # Find max valid index (minimum across all files)
     max_valid_idx = min(len(gt_data), *retriever_lengths.values())
-    print(f"\nMax valid index: {max_valid_idx}")
+    print(f"\nMax valid index: {max_valid_idx}",flush=True)
     
     # ========================================================================
     # Sample queries from valid range only
@@ -346,7 +346,7 @@ def main():
     
     # Use all available queries (or sample if you want fewer)
     N_QUERIES_SAMPLE = max_valid_idx  # Use all 10,000
-    N_QUERIES_SAMPLE = min(1000, max_valid_idx)  # Or sample 5000
+    #, max_valid_idx)  # Or sample 5000
     
     if N_QUERIES_SAMPLE >= max_valid_idx:
         # Use all valid indices
