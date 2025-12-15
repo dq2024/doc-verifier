@@ -302,8 +302,8 @@ def main():
     
     retriever_files = {
         'contriever': '/scratch/dq2024/diverse_retriever/data/contriever_training_file_retrieved_all_queries.json',
-        'qwen3': '/scratch/dq2024/diverse_retriever/data/qwen3_training_file_retrieved.json_all_queries',
-        'infly': '/scratch/dq2024/diverse_retriever/data/infly_training_file_retrieved.json_all_queries',
+        'qwen3': '/scratch/dq2024/diverse_retriever/data/qwen3_training_file_retrieved_all_queries.json',
+        'infly': '/scratch/dq2024/diverse_retriever/data/infly_training_file_retrieved_all_queries.json',
     }
     
     ground_truth_file = '/scratch/dq2024/diverse_retriever/train_data.jsonl'
